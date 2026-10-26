@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────
+   SONORA — Design Tokens
+   Retro-futuristic audio hardware workstation aesthetic.
+   Reference: Sonora Retro Music Queue Interface(1).png
+   ────────────────────────────────────────────────────────── */
+
+:root {
+  /* Backgrounds */
+  --sn-bg:             #F4F2EB;
+  --sn-bg-elevated:    #FFFFFF;
+
+  /* Surfaces */
+  --sn-surface:        #EBE8DF;
+  --sn-surface-alt:    #E3DFD4;
+  --sn-surface-sunken: #DDD8CC;
+  --sn-player-chassis: #F4F2EB;
+  --sn-lcd-bg:         #171717;
+
+  /* Text */
+  --sn-text:           #171717;
+  --sn-text-secondary: #76746E;
+  --sn-text-tertiary:  #A29F98;
+  --sn-text-inverse:   #F4F2EB;
+
+  /* Borders */
+  --sn-border:         #DDD9CE;
+  --sn-border-subtle:  #E6E2D8;
+  --sn-border-strong:  #C4BFB2;
+
+  /* Accent — Sage Green (#89996B) */
+  --sn-accent:         #89996B;
+  --sn-accent-hover:   #77875C;
+  --sn-accent-muted:   rgba(137, 153, 107, 0.16);
+  --sn-accent-border:  rgba(137, 153, 107, 0.35);
+  --sn-accent-ring:    rgba(137, 153, 107, 0.45);
+  --sn-accent-text:    #FFFFFF;
+
+  /* Focus */
+  --sn-focus-ring:     rgba(137, 153, 107, 0.45);
+
+  /* Shadows */
+  --sn-shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.03);
+  --sn-shadow-md:      0 2px 6px rgba(0, 0, 0, 0.04);
+  --sn-shadow-lg:      0 8px 24px rgba(0, 0, 0, 0.06);
+  --sn-shadow-inset:   inset 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  /* Radii */
+  --sn-radius-sm:      4px;
+  --sn-radius-md:      8px;
+  --sn-radius-lg:      14px;
+  --sn-radius-xl:      18px;
+  --sn-radius-2xl:     24px;
+  --sn-radius-full:    9999px;
+
+  /* Transitions */
+  --sn-transition:     120ms ease;
+}
+
+/* ── Dark Theme ────────────────────────────────────────── */
+[data-theme="dark"] {
+  --sn-bg:             #121211;
+  --sn-bg-elevated:    #1A1A18;
+
+  --sn-surface:        #1A1A18;
+  --sn-surface-alt:    #242421;
+  --sn-surface-sunken: #0E0E0D;
+  --sn-player-chassis: #121211;
+  --sn-lcd-bg:         #0C0C0B;
+
+  --sn-text:           #F4F3EE;
+  --sn-text-secondary: #9C9991;
+  --sn-text-tertiary:  #6E6B64;
+  --sn-text-inverse:   #171717;
+
+  --sn-border:         #2B2B27;
+  --sn-border-subtle:  #21211E;
+  --sn-border-strong:  #3D3D37;
+
+  --sn-accent:         #89996B;
+  --sn-accent-hover:   #9BB07B;
+  --sn-accent-muted:   rgba(137, 153, 107, 0.20);
+  --sn-accent-border:  rgba(137, 153, 107, 0.40);
+  --sn-accent-ring:    rgba(137, 153, 107, 0.50);
+  --sn-accent-text:    #121211;
+
+  --sn-focus-ring:     rgba(137, 153, 107, 0.50);
+
+  --sn-shadow-sm:      0 1px 2px rgba(0, 0, 0, 0.30);
+  --sn-shadow-md:      0 2px 6px rgba(0, 0, 0, 0.40);
+  --sn-shadow-lg:      0 8px 24px rgba(0, 0, 0, 0.55);
+  --sn-shadow-inset:   inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+
+/* ── Tailwind v4 Theme Bridge ──────────────────────────── */
+@theme inline {
+  --color-background:     var(--sn-bg);
+  --color-foreground:     var(--sn-text);
+  --color-surface:        var(--sn-surface);
+  --color-surface-alt:    var(--sn-surface-alt);
+  --color-surface-sunken: var(--sn-surface-sunken);
+  --color-player-chassis: var(--sn-player-chassis);
+  --color-lcd-bg:         var(--sn-lcd-bg);
+  --color-muted:          var(--sn-text-secondary);
+  --color-muted-foreground: var(--sn-text-tertiary);
+  --color-border:         var(--sn-border);
+  --color-border-subtle:  var(--sn-border-subtle);
+  --color-border-strong:  var(--sn-border-strong);
+  --color-accent:         var(--sn-accent);
+  --color-accent-hover:   var(--sn-accent-hover);
+  --color-accent-muted:   var(--sn-accent-muted);
+  --color-accent-border:  var(--sn-accent-border);
+  --color-accent-ring:    var(--sn-accent-ring);
+  --color-accent-text:    var(--sn-accent-text);
+  --color-focus-ring:     var(--sn-focus-ring);
+  --color-elevated:       var(--sn-bg-elevated);
+  --color-inverse:        var(--sn-text-inverse);
+
+  --shadow-sm:     var(--sn-shadow-sm);
+  --shadow-md:     var(--sn-shadow-md);
+  --shadow-lg:     var(--sn-shadow-lg);
+  --shadow-inset:  var(--sn-shadow-inset);
+
+  --radius-sm:   var(--sn-radius-sm);
+  --radius-md:   var(--sn-radius-md);
+  --radius-lg:   var(--sn-radius-lg);
+  --radius-xl:   var(--sn-radius-xl);
+  --radius-2xl:  var(--sn-radius-2xl);
+  --radius-full: var(--sn-radius-full);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ── Base Styles ───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  border-color: var(--sn-border-subtle);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--sn-bg);
+  color: var(--sn-text);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Focus Styles ──────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--sn-accent);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar (Webkit) ────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sn-border-subtle);
+  border-radius: var(--sn-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sn-border);
+}
+
+/* ── Selection ─────────────────────────────────────────── */
+::selection {
+  background-color: var(--sn-accent-muted);
+  color: var(--sn-text);
+}
+
+/* ── Vinyl Record Animation ───────────────────────────── */
+@keyframes vinyl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-vinyl-spin {
+  animation: vinyl-spin 20s linear infinite;
+}
+
+.animate-vinyl-paused {
+  animation-play-state: paused;
+}
+
+/* ── Minimalist Volume Slider Knob Styling ──────────────── */
+input[type="range"].volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type="range"].volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #171717;
+  cursor: pointer;
+  margin-top: -3.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 100ms ease;
+}
+
+[data-theme="dark"] input[type="range"].volume-slider::-webkit-slider-thumb {
+  background: #F4F3EE;
+}
+
+input[type="range"].volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+}
+
+input[type="range"].volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #171717;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Hide Next.js dev overlay indicator from overlapping UI ── */
+nextjs-portal,
+[data-nextjs-toast-wrapper],
+[data-nextjs-dev-overlay],
+[data-nextjs-dialog-overlay] {
+  display: none !important;
+}
+

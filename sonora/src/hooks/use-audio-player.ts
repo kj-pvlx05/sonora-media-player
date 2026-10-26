@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Track, QueueItem, HistoryEntry, PlaybackStatus } from "@/types/track";
 import { INITIAL_QUEUE, INITIAL_RECENTLY_PLAYED } from "@/lib/mock-data";
 import { sonoraApi } from "@/lib/api-client";
+import { getAssetPath } from "@/lib/utils";
 
 export interface AudioPlayerState {
   currentTrack: Track;
@@ -171,7 +172,7 @@ export function useAudioPlayer(
 
       try {
         setError(null);
-        audio.src = track.audioSrc;
+        audio.src = getAssetPath(track.audioSrc);
         audio.load();
         await audio.play();
         notify(`Playing: ${track.title}`);
@@ -252,7 +253,7 @@ export function useAudioPlayer(
 
     // Load initial track audio source if available
     if (initialTrack.audioSrc) {
-      audio.src = initialTrack.audioSrc;
+      audio.src = getAssetPath(initialTrack.audioSrc);
     }
 
     // Register audio event listeners

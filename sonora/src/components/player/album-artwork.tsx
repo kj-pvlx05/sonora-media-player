@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Track } from "@/types/track";
-import { cn } from "@/lib/utils";
+import { cn, getAssetPath } from "@/lib/utils";
 
 interface AlbumArtworkProps {
   track: Track;
@@ -42,7 +42,7 @@ export function AlbumArtwork({
       {hasImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={track.coverImage}
+          src={getAssetPath(track.coverImage)}
           alt={`${track.title} by ${track.artist}`}
           onError={() => setImageError(true)}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

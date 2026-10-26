@@ -1,5 +1,9 @@
 # 🎵 SONORA — Media Player & DSA Engine
 
+[![Deploy to GitHub Pages](https://github.com/kj-pvlx05/sonora-media-player/actions/workflows/deploy.yml/badge.svg)](https://github.com/kj-pvlx05/sonora-media-player/actions/workflows/deploy.yml)
+
+🌐 **Live Web Application**: [https://kj-pvlx05.github.io/sonora-media-player/](https://kj-pvlx05.github.io/sonora-media-player/)
+
 SONORA is a sleek, modern media player integrated with an interactive **Data Structures & Algorithms (DSA)** engine. Built to bridge clean UI design with practical algorithmic data structures, SONORA visualizes underlying playlist and queue data structures in real time as audio plays.
 
 ---

@@ -7,21 +7,35 @@ import java.util.function.Function;
 
 /**
  * Custom First-In, First-Out (FIFO) Queue implementation for SONORA Playback Management.
- * Implemented from first principles using dynamic linear nodes.
+ * Implemented using dynamic singly linked nodes (QueueNode).
  *
- * Time Complexities:
- * - enqueue: O(1)
- * - dequeue: O(1)
- * - peek:    O(1)
- * - size:    O(1)
+ * Operations and Time Complexities:
+ * - enqueue(item):   O(1)
+ * - dequeue():       O(1)
+ * - peek():          O(1)
+ * - isEmpty():       O(1)
+ * - size():          O(1)
+ * - clear():         O(1)
+ * - removeById():    O(n) search + O(1) unlinking
+ * - reorder():       O(n)
+ * - toList():        O(n)
  *
- * @param <T> Element type stored in the queue
+ * @param <T> Type of elements stored in the queue
  */
 public class PlaybackQueue<T> {
+
+    // Points to the front (first element) of the queue
     private QueueNode<T> front;
+
+    // Points to the rear (last element) of the queue
     private QueueNode<T> rear;
+
+    // Total number of elements currently in the queue
     private int size;
 
+    /**
+     * Initializes an empty playback queue.
+     */
     public PlaybackQueue() {
         this.front = null;
         this.rear = null;
@@ -29,10 +43,10 @@ public class PlaybackQueue<T> {
     }
 
     /**
-     * Enqueues an item at the rear of the queue (FIFO policy).
-     * O(1) time complexity.
+     * Inserts an element at the end of the queue (FIFO policy).
+     * Time Complexity: O(1) because we maintain a direct rear pointer.
      *
-     * @param item element to enqueue
+     * @param item the element to add (cannot be null)
      */
     public synchronized void enqueue(T item) {
         if (item == null) {
@@ -40,10 +54,13 @@ public class PlaybackQueue<T> {
         }
 
         QueueNode<T> newNode = new QueueNode<>(item);
+
+        // If the queue is empty, the new node becomes both front and rear
         if (isEmpty()) {
             front = newNode;
             rear = newNode;
         } else {
+            // Link the new node after the current rear and update rear
             rear.setNext(newNode);
             rear = newNode;
         }
@@ -51,52 +68,63 @@ public class PlaybackQueue<T> {
     }
 
     /**
-     * Dequeues and returns the front item of the queue (FIFO policy).
-     * O(1) time complexity.
+     * Removes and returns the element at the front of the queue (FIFO policy).
+     * Time Complexity: O(1) because we remove directly from the front pointer.
      *
-     * @return the dequeued item
-     * @throws NoSuchElementException if queue is empty
+     * @return the dequeued element
+     * @throws NoSuchElementException if the queue is empty
      */
     public synchronized T dequeue() {
         if (isEmpty()) {
             throw new NoSuchElementException("PlaybackQueue is empty: cannot dequeue");
         }
 
-        T data = front.getData();
+        T removedData = front.getData();
+
+        // Move the front pointer to the next node
         front = front.getNext();
+
+        // If the queue becomes empty after removing, reset rear to null
         if (front == null) {
             rear = null;
         }
+
         size--;
-        return data;
+        return removedData;
     }
 
     /**
-     * Inspects the front item without removing it.
-     * O(1) time complexity.
+     * Retrieves the element at the front without removing it.
+     * Time Complexity: O(1).
      *
-     * @return the front item or null if empty
+     * @return the front element, or null if the queue is empty
      */
     public synchronized T peek() {
-        return isEmpty() ? null : front.getData();
+        if (isEmpty()) {
+            return null;
+        }
+        return front.getData();
     }
 
     /**
-     * Checks if the queue is currently empty.
+     * Checks if the queue has no elements.
+     * Time Complexity: O(1).
      */
     public synchronized boolean isEmpty() {
         return size == 0;
     }
 
     /**
-     * Returns the current number of elements in the queue.
+     * Returns the total count of elements currently in the queue.
+     * Time Complexity: O(1).
      */
     public synchronized int size() {
         return size;
     }
 
     /**
-     * Clears all elements from the queue.
+     * Removes all elements from the queue.
+     * Time Complexity: O(1).
      */
     public synchronized void clear() {
         front = null;
@@ -105,34 +133,43 @@ public class PlaybackQueue<T> {
     }
 
     /**
-     * Removes an item matching the provided identifier extractor.
+     * Removes a specific item matching the given ID from anywhere in the queue.
+     * Used when a user cancels or removes an upcoming track from the playlist queue.
      *
-     * @param idExtractor function to extract unique id from element
-     * @param id          target id to remove
-     * @return true if an item was removed, false otherwise
+     * Time Complexity: O(n) search + O(1) unlinking.
+     *
+     * @param idExtractor function to extract the unique ID string from element T
+     * @param id          the target ID to search for
+     * @return true if an item was found and removed, false otherwise
      */
     public synchronized boolean removeById(Function<T, String> idExtractor, String id) {
-        if (isEmpty() || id == null) {
+        if (isEmpty() || idExtractor == null || id == null) {
             return false;
         }
 
-        // Case 1: Target is at front
-        if (id.equals(idExtractor.apply(front.getData()))) {
+        // Case 1: Target element is at the front of the queue
+        String frontId = idExtractor.apply(front.getData());
+        if (id.equals(frontId)) {
             dequeue();
             return true;
         }
 
-        // Case 2: Target is in the middle or rear
+        // Case 2: Target element is in the middle or at the rear
+        // We traverse using 'current' as the predecessor node
         QueueNode<T> current = front;
         while (current.getNext() != null) {
-            if (id.equals(idExtractor.apply(current.getNext().getData()))) {
+            String nextId = idExtractor.apply(current.getNext().getData());
+            if (id.equals(nextId)) {
                 QueueNode<T> nodeToRemove = current.getNext();
+
+                // Unlink nodeToRemove by skipping over it
                 current.setNext(nodeToRemove.getNext());
 
-                // If removing rear, update rear pointer
+                // If we removed the rear node, update rear to the predecessor
                 if (nodeToRemove == rear) {
                     rear = current;
                 }
+
                 size--;
                 return true;
             }
@@ -143,34 +180,45 @@ public class PlaybackQueue<T> {
     }
 
     /**
-     * Reorders an element from one index to another (user drag modification of FIFO order).
+     * Moves an element from a source index to a destination index.
+     * Used when a user drags and reorders a track in the playback queue.
      *
-     * @param fromIndex zero-based source index
-     * @param toIndex   zero-based target index
-     * @return true if reordered successfully
+     * Time Complexity: O(n).
+     *
+     * @param fromIndex zero-based source position
+     * @param toIndex   zero-based destination position
+     * @return true if the queue was successfully reordered, false if indices are invalid
      */
     public synchronized boolean reorder(int fromIndex, int toIndex) {
+        // Validate index bounds
         if (fromIndex < 0 || fromIndex >= size || toIndex < 0 || toIndex >= size || fromIndex == toIndex) {
             return false;
         }
 
+        // 1. Copy queue elements into a temporary list
         List<T> list = toList();
+
+        // 2. Reposition the selected element in the list
         T movedItem = list.remove(fromIndex);
         list.add(toIndex, movedItem);
 
-        // Reconstruct queue
+        // 3. Clear and re-populate the queue in the updated order
         clear();
         for (T item : list) {
             enqueue(item);
         }
+
         return true;
     }
 
     /**
-     * Returns an immutable snapshot list of all items in strict FIFO order.
+     * Returns a new List containing all queue elements in FIFO order (front to rear).
+     * Time Complexity: O(n).
+     *
+     * @return a List of elements currently in the queue
      */
     public synchronized List<T> toList() {
-        List<T> items = new ArrayList<>(size);
+        List<T> items = new ArrayList<>();
         QueueNode<T> current = front;
         while (current != null) {
             items.add(current.getData());

@@ -60,23 +60,62 @@ class PlaybackQueueTest {
     }
 
     @Test
-    @DisplayName("Should remove target item by ID predicate")
-    void testRemoveById() {
-        queue.enqueue("alpha");
-        queue.enqueue("beta");
-        queue.enqueue("gamma");
+    @DisplayName("Should handle single-element queue transitions correctly")
+    void testSingleElementQueue() {
+        queue.enqueue("Solo Track");
+        assertEquals(1, queue.size());
+        assertFalse(queue.isEmpty());
+        assertEquals("Solo Track", queue.peek());
 
-        boolean removed = queue.removeById(s -> s, "beta");
-        assertTrue(removed);
-        assertEquals(2, queue.size());
+        assertEquals("Solo Track", queue.dequeue());
+        assertEquals(0, queue.size());
+        assertTrue(queue.isEmpty());
+        assertNull(queue.peek());
 
-        List<String> list = queue.toList();
-        assertEquals(List.of("alpha", "gamma"), list);
+        // Enqueue again after becoming empty
+        queue.enqueue("New Track");
+        assertEquals(1, queue.size());
+        assertEquals("New Track", queue.peek());
     }
 
     @Test
-    @DisplayName("Should reorder items in queue")
-    void testReorder() {
+    @DisplayName("Should remove target item from front, middle, and rear")
+    void testRemoveFrontMiddleAndRear() {
+        // Test removing FRONT item
+        queue.enqueue("First");
+        queue.enqueue("Second");
+        queue.enqueue("Third");
+        boolean removedFront = queue.removeById(s -> s, "First");
+        assertTrue(removedFront);
+        assertEquals(2, queue.size());
+        assertEquals("Second", queue.peek());
+        assertEquals(List.of("Second", "Third"), queue.toList());
+
+        // Clear and test removing REAR item
+        queue.clear();
+        queue.enqueue("First");
+        queue.enqueue("Second");
+        queue.enqueue("Third");
+        boolean removedRear = queue.removeById(s -> s, "Third");
+        assertTrue(removedRear);
+        assertEquals(2, queue.size());
+        assertEquals("First", queue.peek());
+        assertEquals(List.of("First", "Second"), queue.toList());
+
+        // Test removing MIDDLE item
+        queue.clear();
+        queue.enqueue("First");
+        queue.enqueue("Second");
+        queue.enqueue("Third");
+        boolean removedMiddle = queue.removeById(s -> s, "Second");
+        assertTrue(removedMiddle);
+        assertEquals(2, queue.size());
+        assertEquals(List.of("First", "Third"), queue.toList());
+    }
+
+    @Test
+    @DisplayName("Should reorder items in queue and preserve FIFO dequeue order afterwards")
+    void testReorderAndVerifyFifoOrderAfterwards() {
         queue.enqueue("A");
         queue.enqueue("B");
         queue.enqueue("C");
@@ -86,6 +125,27 @@ class PlaybackQueueTest {
 
         List<String> list = queue.toList();
         assertEquals(List.of("C", "A", "B"), list);
+
+        // Verify subsequent FIFO dequeue order
+        assertEquals("C", queue.dequeue());
+        assertEquals("A", queue.dequeue());
+        assertEquals("B", queue.dequeue());
+        assertTrue(queue.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should safely handle all operations on empty queue")
+    void testEmptyQueueOperations() {
+        assertTrue(queue.isEmpty());
+        assertEquals(0, queue.size());
+        assertNull(queue.peek());
+        assertFalse(queue.removeById(s -> s, "nonexistent"));
+        assertFalse(queue.reorder(0, 1));
+        assertTrue(queue.toList().isEmpty());
+
+        // clear() on already empty queue should be safe
+        queue.clear();
+        assertEquals(0, queue.size());
     }
 
     @Test

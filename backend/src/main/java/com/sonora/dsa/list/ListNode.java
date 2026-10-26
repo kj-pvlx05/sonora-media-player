@@ -1,16 +1,26 @@
 package com.sonora.dsa.list;
 
 /**
- * Node representation for the custom Doubly Linked List (MediaLinkedList).
- * Maintains bidirectional references (prev and next) to adjacent nodes.
+ * Node class for the custom Doubly Linked List (MediaLinkedList).
+ * Stores data and maintains bidirectional links (prev and next) to adjacent nodes.
  *
- * @param <T> data payload type
+ * @param <T> Type of data stored in this node
  */
 public class ListNode<T> {
+
+    // Data payload stored in this node
     private T data;
+
+    // Pointer to the previous node in the list
     private ListNode<T> prev;
+
+    // Pointer to the next node in the list
     private ListNode<T> next;
 
+    /**
+     * Constructor to create a new doubly linked list node.
+     * Both prev and next pointers are initialized to null.
+     */
     public ListNode(T data) {
         this.data = data;
         this.prev = null;
